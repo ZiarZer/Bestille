@@ -1,6 +1,7 @@
 package fr.ziarzer;
 
 import fr.ziarzer.commands.FriendshipCommand;
+import fr.ziarzer.commands.SeeFriendshipAdminCommand;
 import fr.ziarzer.domain.FriendshipManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ public class BestillePlugin extends JavaPlugin {
         friendshipManager = new FriendshipManager(getLogger());
 
         this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager));
+        this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager));
 
         getLogger().info("Bestille plugin enabled");
         getServer().getScheduler().runTaskTimer(this, () -> {

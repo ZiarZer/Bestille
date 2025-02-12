@@ -9,3 +9,6 @@ website: www.github.com/ZiarZer
 commands:
   friendship:
     usage: /friendship <player>
+  seefriendship:
+    usage: /seefriendship <player> [<player>]
+    permission: op
