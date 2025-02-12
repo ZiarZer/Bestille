@@ -46,14 +46,18 @@ public class FriendshipCommand implements CommandExecutor {
         if (args.length == 0) {
             return false;
         }
-
+        UUID uuid = ((Player) sender).getUniqueId();
         UUID otherUuid = playerService.getUUIDByNickname(args[0]);
         if (otherUuid == null) {
             sender.sendMessage(ChatColor.RED + "Player " + args[0] + " not found");
             return true;
         }
+        if (uuid == otherUuid) {
+            sender.sendMessage("This is you");
+            return true;
+        }
 
-        Integer friendshipLevel = friendshipManager.getFriendshipLevel(((Player) sender).getUniqueId(), otherUuid);
+        Integer friendshipLevel = friendshipManager.getFriendshipLevel(uuid, otherUuid);
         FriendshipMessage message;
         if (friendshipLevel == null || friendshipLevel == 0) {
             message = FriendshipMessage.STRANGERS;
