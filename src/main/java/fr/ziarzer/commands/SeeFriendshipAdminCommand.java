@@ -3,13 +3,12 @@ package fr.ziarzer.commands;
 import fr.ziarzer.domain.FriendshipManager;
 import fr.ziarzer.domain.PlayerService;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class SeeFriendshipAdminCommand implements CommandExecutor {
@@ -33,7 +32,13 @@ public class SeeFriendshipAdminCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length >= 2) {
+        if (args.length == 1) {
+            sender.sendMessage(ChatColor.BOLD + "Friendships of " + args[0]);
+            Map<UUID, Integer> friendshipLevels = friendshipManager.getAllFriendshipLevels(firstUuid);
+            friendshipLevels.forEach(
+                    ((otherUuid, friendshipLevel) -> sender.sendMessage(playerService.getNicknameByUUID(otherUuid) + ": " + friendshipLevel.toString()))
+            );
+        } else {
             UUID secondUuid = playerService.getUUIDByNickname(args[1]);
             if (secondUuid == null) {
                 sender.sendMessage(ChatColor.RED + "Player " + args[1] + " not found");

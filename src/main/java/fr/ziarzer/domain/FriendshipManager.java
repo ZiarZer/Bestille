@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -34,6 +36,16 @@ public class FriendshipManager {
         } catch (SQLException e) {
             this.logger.info(e.getMessage());
             return null;
+        }
+    }
+
+    public Map<UUID, Integer> getAllFriendshipLevels(UUID uuid) {
+        try {
+            return repository.getAllFriendshipLevels(uuid);
+        } catch (SQLException e) {
+            this.logger.info(e.getMessage());
+            Map<UUID, Integer> emptyMap = new HashMap<>();
+            return emptyMap;
         }
     }
 

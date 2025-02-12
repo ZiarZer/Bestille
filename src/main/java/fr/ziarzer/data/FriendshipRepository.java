@@ -3,6 +3,8 @@ package fr.ziarzer.data;
 import fr.ziarzer.commands.DbConnection;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class FriendshipRepository {
@@ -29,6 +31,24 @@ public class FriendshipRepository {
         ResultSet results = stmt.executeQuery();
         if (!results.next()) { return 0; }
         return results.getInt(1);
+    }
+
+    public Map<UUID, Integer> getAllFriendshipLevels(UUID uuid) throws SQLException {
+        String sql = "SELECT * FROM friendship_levels WHERE player_1 = ? OR player_2 = ?;";
+        PreparedStatement stmt = dbConnection.prepareStatement(sql);
+        stmt.setString(1, uuid.toString());
+        stmt.setString(2, uuid.toString());
+        ResultSet results = stmt.executeQuery();
+
+        HashMap<UUID, Integer> friendshipLevels = new HashMap<>();
+        while (results.next()) {
+            UUID otherUuid = UUID.fromString(results.getString(1));
+            if (uuid == otherUuid) {
+                otherUuid = UUID.fromString(results.getString(2));
+            }
+            friendshipLevels.put(otherUuid, results.getInt(3));
+        }
+        return friendshipLevels;
     }
 
     public void incrementFriendship(UUID uuid_1, UUID uuid_2) throws SQLException {
