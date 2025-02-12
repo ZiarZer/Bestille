@@ -1,5 +1,6 @@
 package fr.ziarzer;
 
+import fr.ziarzer.commands.FriendshipCommand;
 import fr.ziarzer.domain.FriendshipManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,9 +30,12 @@ public class BestillePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         friendshipManager = new FriendshipManager(getLogger());
+
+        this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager));
+
         getLogger().info("Bestille plugin enabled");
         getServer().getScheduler().runTaskTimer(this, () -> {
-                Collection <? extends Player> alivePlayers = Bukkit.getOnlinePlayers().stream().filter(player -> player.getHealth() > 0).collect(Collectors.toList());
+                Collection <? extends Player> alivePlayers = Bukkit.getOnlinePlayers().stream().filter(player -> player.getHealth() >= 0).collect(Collectors.toList());
                 for (Player player: alivePlayers) {
                     getNearbyPlayers(player, alivePlayers).filter(otherPlayer -> otherPlayer.getUniqueId().compareTo(player.getUniqueId()) > 0).forEach(otherPlayer -> {
                         friendshipManager.incrementFriendship(player, otherPlayer);

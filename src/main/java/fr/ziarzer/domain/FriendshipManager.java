@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class FriendshipManager {
-    static final int MAX_FRIENDSHIP_LEVEL = 1200;
+    public static final int MAX_FRIENDSHIP_LEVEL = 1200;
     public FriendshipDb db;
     private final Logger logger;
 
@@ -16,6 +16,15 @@ public class FriendshipManager {
         this.db = new FriendshipDb(logger);
         this.db.initConnection();
         this.logger = logger;
+    }
+
+    public Integer getFriendshipLevel(Player player, Player otherPlayer) {
+        try {
+            return db.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
+        } catch (SQLException e) {
+            this.logger.info(e.getMessage());
+            return null;
+        }
     }
 
     public void incrementFriendship(Player player, Player otherPlayer) {

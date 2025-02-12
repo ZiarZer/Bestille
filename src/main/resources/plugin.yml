@@ -2,5 +2,10 @@ name: Bestille
 version: 1.0.0
 main: fr.ziarzer.BestillePlugin
 api-version: '1.21'
+
 author: ZiarZer
 website: www.github.com/ZiarZer
+
+commands:
+  friendship:
+    usage: /friendship <player>
