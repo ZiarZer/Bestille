@@ -4,6 +4,7 @@ import fr.ziarzer.commands.DbConnection;
 import fr.ziarzer.commands.FriendshipCommand;
 import fr.ziarzer.commands.SeeFriendshipAdminCommand;
 import fr.ziarzer.domain.FriendshipManager;
+import fr.ziarzer.domain.PlayerService;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -19,9 +20,10 @@ public class BestillePlugin extends JavaPlugin {
         try {
             dbConnection = DbConnection.getInstance();
             friendshipManager = new FriendshipManager(getLogger());
+            PlayerService playerService = new PlayerService();
 
-            this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager));
-            this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager));
+            this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager, playerService));
+            this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager, playerService));
 
             getLogger().info("Bestille plugin enabled");
 

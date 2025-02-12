@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,9 +28,9 @@ public class FriendshipManager {
         this.logger = logger;
     }
 
-    public Integer getFriendshipLevel(Player player, Player otherPlayer) {
+    public Integer getFriendshipLevel(UUID uuid, UUID otherUuid) {
         try {
-            return repository.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
+            return repository.getCurrentFriendship(uuid, otherUuid);
         } catch (SQLException e) {
             this.logger.info(e.getMessage());
             return null;
