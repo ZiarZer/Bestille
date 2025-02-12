@@ -1,26 +1,27 @@
 package fr.ziarzer.domain;
 
-import fr.ziarzer.data.FriendshipDb;
+import fr.ziarzer.data.FriendshipRepository;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import static fr.ziarzer.utils.StringUtils.colorText;
+
 public class FriendshipManager {
     public static final int MAX_FRIENDSHIP_LEVEL = 1200;
-    public FriendshipDb db;
+    public FriendshipRepository repository;
     private final Logger logger;
 
-    public FriendshipManager(Logger logger) {
-        this.db = new FriendshipDb(logger);
-        this.db.initConnection();
+    public FriendshipManager(Logger logger) throws SQLException {
+        this.repository = new FriendshipRepository();
         this.logger = logger;
     }
 
     public Integer getFriendshipLevel(Player player, Player otherPlayer) {
         try {
-            return db.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
+            return repository.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
         } catch (SQLException e) {
             this.logger.info(e.getMessage());
             return null;
@@ -29,8 +30,8 @@ public class FriendshipManager {
 
     public void incrementFriendship(Player player, Player otherPlayer) {
         try {
-            db.incrementFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
-            int newFriendshipLevel = db.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
+            repository.incrementFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
+            int newFriendshipLevel = repository.getCurrentFriendship(player.getUniqueId(), otherPlayer.getUniqueId());
             if (newFriendshipLevel == MAX_FRIENDSHIP_LEVEL) {
                 sendNewBestFriendMessage(player, otherPlayer);
                 sendNewBestFriendMessage(otherPlayer, player);
@@ -49,13 +50,5 @@ public class FriendshipManager {
                 colorText(" are now ", ChatColor.LIGHT_PURPLE, false) +
                 colorText("best friends", ChatColor.LIGHT_PURPLE, true)
         );
-    }
-
-    private String colorText(String text, ChatColor color, boolean isBold) {
-        String colors = ChatColor.RESET + "" + color + "";
-        if (isBold) {
-            colors += ChatColor.BOLD + "";
-        }
-        return colors + text + ChatColor.RESET;
     }
 }

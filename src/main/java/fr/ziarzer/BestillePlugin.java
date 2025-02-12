@@ -1,5 +1,6 @@
 package fr.ziarzer;
 
+import fr.ziarzer.commands.DbConnection;
 import fr.ziarzer.commands.FriendshipCommand;
 import fr.ziarzer.commands.SeeFriendshipAdminCommand;
 import fr.ziarzer.domain.FriendshipManager;
@@ -8,13 +9,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BestillePlugin extends JavaPlugin {
+    private Connection dbConnection;
     private FriendshipManager friendshipManager;
     public static final int MAX_DISTANCE = 100;
     public static final int MAX_SQUARE_DISTANCE = MAX_DISTANCE * MAX_DISTANCE;
@@ -30,28 +32,35 @@ public class BestillePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        friendshipManager = new FriendshipManager(getLogger());
+        try {
+            dbConnection = DbConnection.getInstance();
+            friendshipManager = new FriendshipManager(getLogger());
 
-        this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager));
-        this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager));
+            this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager));
+            this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager));
 
-        getLogger().info("Bestille plugin enabled");
-        getServer().getScheduler().runTaskTimer(this, () -> {
-                Collection <? extends Player> alivePlayers = Bukkit.getOnlinePlayers().stream().filter(player -> player.getHealth() >= 0).collect(Collectors.toList());
-                for (Player player: alivePlayers) {
-                    getNearbyPlayers(player, alivePlayers).filter(otherPlayer -> otherPlayer.getUniqueId().compareTo(player.getUniqueId()) > 0).forEach(otherPlayer -> {
-                        friendshipManager.incrementFriendship(player, otherPlayer);
-                    });
+            getLogger().info("Bestille plugin enabled");
+            getServer().getScheduler().runTaskTimer(this, () -> {
+                Collection<? extends Player> alivePlayers = Bukkit.getOnlinePlayers().stream().filter(player -> player.getHealth() >= 0).collect(Collectors.toList());
+                for (Player player : alivePlayers) {
+                    getNearbyPlayers(player, alivePlayers).filter(otherPlayer -> otherPlayer.getUniqueId().compareTo(player.getUniqueId()) > 0).forEach(otherPlayer -> friendshipManager.incrementFriendship(player, otherPlayer));
                 }
-        }, 0, TASK_TIMER_INTERVAL);
+            }, 0, TASK_TIMER_INTERVAL);
+        } catch (SQLException e) {
+            getLogger().warning(e.getMessage());
+        }
     }
 
     @Override
     public void onDisable() {
         try {
-            friendshipManager.db.disconnect();
+            getLogger().info("Disconnecting database");
+            if (dbConnection != null && !dbConnection.isClosed()) {
+                dbConnection.close();
+                getLogger().info("Closed database connection");
+            }
         } catch (SQLException e) {
-            getLogger().log(Level.WARNING, e.getMessage());
+            getLogger().warning(e.getMessage());
         }
     }
 }
