@@ -34,7 +34,7 @@ public class FriendshipRepository {
     }
 
     public Map<UUID, Integer> getAllFriendshipLevels(UUID uuid) throws SQLException {
-        String sql = "SELECT * FROM friendship_levels WHERE player_1 = ? OR player_2 = ?;";
+        String sql = "SELECT * FROM friendship_levels WHERE player_1 = ? OR player_2 = ? ORDER BY friendship_level DESC;";
         PreparedStatement stmt = dbConnection.prepareStatement(sql);
         stmt.setString(1, uuid.toString());
         stmt.setString(2, uuid.toString());

@@ -7,6 +7,8 @@ author: ZiarZer
 website: www.github.com/ZiarZer
 
 commands:
+  friends:
+    usage: /friends
   friendship:
     usage: /friendship <player>
   seefriendship:

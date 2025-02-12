@@ -2,6 +2,7 @@ package fr.ziarzer;
 
 import fr.ziarzer.commands.DbConnection;
 import fr.ziarzer.commands.FriendshipCommand;
+import fr.ziarzer.commands.FriendsCommand;
 import fr.ziarzer.commands.SeeFriendshipAdminCommand;
 import fr.ziarzer.domain.FriendshipManager;
 import fr.ziarzer.domain.PlayerService;
@@ -22,6 +23,7 @@ public class BestillePlugin extends JavaPlugin {
             friendshipManager = new FriendshipManager(getLogger());
             PlayerService playerService = new PlayerService();
 
+            this.getCommand("friends").setExecutor(new FriendsCommand(friendshipManager, playerService));
             this.getCommand("friendship").setExecutor(new FriendshipCommand(friendshipManager, playerService));
             this.getCommand("seefriendship").setExecutor(new SeeFriendshipAdminCommand(friendshipManager, playerService));
 
